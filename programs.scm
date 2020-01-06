@@ -85,11 +85,50 @@
       ((eq? old (car lat)) (cons new (cons old (multiinsertL new old (cdr lat)))))
       (else (cons (car lat) (multiinsertL new old (cdr lat)))))))
 
+(define o+
+  (lambda (n m)
+    (cond
+      ((zero? m) n)
+      (else (o+ (add1 n) (sub1 m))))))
+
+(define o-
+  (lambda (n m)
+    (cond
+      ((zero? m) n)
+      (else (o- (sub1 n) (sub1 m))))))
+
+(define addtup
+  (lambda (tup)
+    (cond
+      ((null? tup) 0)
+      (else (o+ (car tup) (addtup (cdr tup)))))))
+
+(define ox
+  (lambda (n m)
+    (cond
+      ((zero? m) 0)
+      (else (o+ n (ox n (sub1 m)))))))
+
+(define tup+
+  (lambda (tup1 tup2)
+    (cond
+      ((null? tup1) tup2)
+      ((null? tup2) tup1)
+      (else (cons (o+ (car tup1) (car tup2)) (tup+ (cdr tup1) (cdr tup2)))))))
+
+
+;PAGE: 71
+
+;(tup+ (quote(3 7 8 1)) (quote(4 6)))
+;(ox 3 12)
+;(addtup (quote(1 2 3 4)))
+;(o+ 46 12)
+;(o- 17 9)
 ;(lat? (quote(bacon and eggs)))
 ;(insertR (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
 ;(insertL (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
 ;(subst (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
 ;(subst2 (car (quote(vanilla))) (car (quote(chocolate))) (car (quote(banana))) (quote(banana ice cream with chocolate topping)))
 ;(multirember (car (quote(cup))) (quote(coffee cup tea cup and hick cup)))
-(multiinsertR (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
-(multiinsertL (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
+;(multiinsertR (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
+;(multiinsertL (car (quote(topping))) (car (quote(fudge))) (quote(ice cream with fudge for fudge dessert)))
