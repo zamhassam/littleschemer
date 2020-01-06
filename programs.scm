@@ -116,9 +116,17 @@
       ((null? tup2) tup1)
       (else (cons (o+ (car tup1) (car tup2)) (tup+ (cdr tup1) (cdr tup2)))))))
 
+(define o>
+  (lambda (n m)
+    (cond
+      ((zero? n) #f)
+      ((zero? m) #t)
+      (else (o> (sub1 n) (sub1 m))))))
 
-;PAGE: 71
+;PAGE: 72
 
+
+(o> 3 3)
 ;(tup+ (quote(3 7 8 1)) (quote(4 6)))
 ;(ox 3 12)
 ;(addtup (quote(1 2 3 4)))
