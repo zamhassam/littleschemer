@@ -167,9 +167,58 @@
       ((zero? (sub1 n)) (cdr lat))
       (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
+(define no-nums
+  (lambda (lat)
+    (cond
+      ((null? lat) (quote()))
+      ((number? (car lat)) (no-nums (cdr lat)))
+      (else (cons (car lat) (no-nums (cdr lat)))))))
 
-;PAGE: 77
+(define all-nums
+  (lambda (lat)
+    (cond
+      ((null? lat) (quote()))
+      ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+      (else (all-nums (cdr lat))))))
 
+(define eqan?
+  (lambda (a1 a2)
+    (cond
+      ((and (number? a1) (number? a2)) (o= a1 a2))
+      ((or (number? a1) (number? a2)) #f)
+      (else (eq? a1 a2)))))
+
+(define occur
+  (lambda (a lat)
+    (cond
+      ((null? lat) 0)
+      ((eqan? a (car lat)) (add1 (occur a (cdr lat))))
+      (else (occur a (cdr lat))))))
+
+(define one?
+  (lambda (n)
+    (o= n 1)))
+
+(define rempick2
+  (lambda (n lat)
+    (cond
+      ((one? n) (cdr lat))
+      (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+
+;PAGE: 81
+;(rempick2 3 (quote(1 car 3 ball 3 car)))
+;(one? 1)
+;(one? 2)
+;(occur (car (quote(car))) (quote(1 car 2 ball 3 car)))
+;(occur 3 (quote(1 car 3 ball 3 car)))
+;(occur 4 (quote(1 car 3 ball 3 car)))
+;(eqan? 4 (car (quote(car))))
+;(eqan? 3 2)
+;(eqan? 3 3)
+;(eqan? (car (quote(car))) (car (quote(ball))))
+;(eqan? (car (quote(car))) (car (quote(car))))
+;(all-nums (quote(5 pears 6 prunes 9 dates)))
+;(no-nums (quote(5 pears 6 prunes 9 dates)))
 ;(rempick 3 (quote(hotdogs with host mustard)))
 ;(pick 4 (quote(lasagna spaghetti ravioli macaroni meatball)))
 ;(olength (quote(hame and cheese on rye)))
