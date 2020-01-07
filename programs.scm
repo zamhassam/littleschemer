@@ -205,7 +205,20 @@
       ((one? n) (cdr lat))
       (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
-;PAGE: 81
+(define rember*
+  (lambda (a l)
+    (cond
+      ((null? l) (quote()))
+      ((atom? (car l))
+       (cond
+         ((eq? a (car l))
+          (rember* a (cdr l)))
+         (else 
+          (cons (car l) (rember* a (cdr l))))))
+      (else (cons (rember* a (car l)) (rember* a (cdr l)))))))
+
+;PAGE: 82
+;(rember* (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
 ;(rempick2 3 (quote(1 car 3 ball 3 car)))
 ;(one? 1)
 ;(one? 2)
