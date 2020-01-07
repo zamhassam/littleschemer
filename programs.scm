@@ -4,7 +4,7 @@
     (and (not (pair? x)) (not (null? x)))))
 
 
-(atom? (quote()))
+;(atom? (quote()))
 
 (define lat?
   (lambda (l)
@@ -123,10 +123,59 @@
       ((zero? m) #t)
       (else (o> (sub1 n) (sub1 m))))))
 
-;PAGE: 72
+(define o<
+  (lambda (n m)
+    (cond
+      ((zero? m) #f)
+      ((zero? n) #t)
+      (else (o< (sub1 n) (sub1 m))))))
+
+(define o=
+  (lambda (n m)
+    (cond
+      ((o< n m) #f)
+      ((o> n m) #f)
+      (else #t))))
+
+(define o^
+  (lambda (n m)
+    (cond
+      ((zero? m) 1)
+      (else (ox n (o^ n (sub1 m)))))))
+
+(define o/
+  (lambda (n m)
+    (cond
+      ((< n m) 0)
+      (else (add1 (o/ (- n m) m))))))
+
+(define olength
+  (lambda (lat)
+    (cond
+      ((null? lat) 0)
+      (else (add1 (olength (cdr lat)))))))
+
+(define pick
+  (lambda (n lat)
+    (cond
+      ((zero? (sub1 n)) (car lat))
+      (else (pick (sub1 n) (cdr lat))))))
+
+(define rempick
+  (lambda (n lat)
+    (cond
+      ((zero? (sub1 n)) (cdr lat))
+      (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
 
-(o> 3 3)
+;PAGE: 77
+
+;(rempick 3 (quote(hotdogs with host mustard)))
+;(pick 4 (quote(lasagna spaghetti ravioli macaroni meatball)))
+;(olength (quote(hame and cheese on rye)))
+;(o/ 15 4)
+;(o^ 5 3)
+;(o> 3 3)
 ;(tup+ (quote(3 7 8 1)) (quote(4 6)))
 ;(ox 3 12)
 ;(addtup (quote(1 2 3 4)))
