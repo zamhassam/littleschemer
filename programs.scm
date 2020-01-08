@@ -217,7 +217,21 @@
           (cons (car l) (rember* a (cdr l))))))
       (else (cons (rember* a (car l)) (rember* a (cdr l)))))))
 
+(define insertR*
+  (lambda (new old l)
+    (cond
+      ((null? l) (quote()))
+      ((atom? (car l))
+       (cond
+         ((eq? old (car l))
+          (cons old (cons new (insertR* new old (cdr l)))))
+         (else
+          (cons (car l) (insertR* new old (cdr l))))))
+      (else (cons (insertR* new old (car l)) (insertR* new old (cdr l)))))))
+
+
 ;PAGE: 82
+(insertR* (car (quote(biscuit))) (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
 ;(rember* (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
 ;(rempick2 3 (quote(1 car 3 ball 3 car)))
 ;(one? 1)
