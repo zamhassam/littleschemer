@@ -229,9 +229,44 @@
           (cons (car l) (insertR* new old (cdr l))))))
       (else (cons (insertR* new old (car l)) (insertR* new old (cdr l)))))))
 
+(define occur*
+  (lambda (a l)
+    (cond
+      ((null? l) 0)
+      ((atom? (car l))
+       (cond
+         ((eq? a (car l)) (add1 (occur* a (cdr l))))
+         (else (occur* a (cdr l)))))
+      (else (o+ (occur* a (car l)) (occur* a (cdr l)))))))
 
-;PAGE: 82
-(insertR* (car (quote(biscuit))) (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
+(define subst*
+  (lambda (new old l)
+    (cond
+      ((null? l) (quote()))
+      ((atom? (car l))
+       (cond
+         ((eq? old (car l)) (cons new (subst* new old (cdr l))))
+         (else (cons (car l) (subst* new old (cdr l))))))
+      (else (cons (subst* new old (car l)) (subst* new old (cdr l)))))))
+
+(define insertL*
+  (lambda (new old l)
+    (cond
+      ((null? l) (quote()))
+      ((atom? (car l))
+       (cond
+         (
+          (eq? old (car l))
+          (cons new (cons (car l) (insertL* new old (cdr l))))
+          )
+         (else (cons (car l) (insertL* new old (cdr l))))))
+      (else (cons (insertL* new old (car l)) (insertL* new old (cdr l)))))))
+
+;PAGE: 86
+(insertL* (car (quote(pecker))) (car (quote(chuck))) (quote(how much '(wood) could '('(a '(wood) chuck)) '('('(chuck))) '(if '(a) '('(wood chuck))) could chuck wood)))
+;(subst* (car (quote(orange))) (car (quote(banana))) (quote(quote(banana) (quote(split (quote(quote(quote(quote(banana ice))) (quote(cream (quote(banana)))) (quote(sherbert)) (quote(banana)) (quote(bread)) (quote(banana brandy)))))))))
+;(occur* (car (quote(banana))) (quote(quote(banana) (quote(split (quote(quote(quote(quote(banana ice))) (quote(cream (quote(banana)))) (quote(sherbert)) (quote(banana)) (quote(bread)) (quote(banana brandy)))))))))
+;(insertR* (car (quote(biscuit))) (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
 ;(rember* (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
 ;(rempick2 3 (quote(1 car 3 ball 3 car)))
 ;(one? 1)
