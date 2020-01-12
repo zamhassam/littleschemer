@@ -262,8 +262,58 @@
          (else (cons (car l) (insertL* new old (cdr l))))))
       (else (cons (insertL* new old (car l)) (insertL* new old (cdr l)))))))
 
-;PAGE: 86
-(insertL* (car (quote(pecker))) (car (quote(chuck))) (quote(how much '(wood) could '('(a '(wood) chuck)) '('('(chuck))) '(if '(a) '('(wood chuck))) could chuck wood)))
+(define member*
+  (lambda (a l)
+    (cond
+      ((null? l) #f)
+      ((atom? (car l))
+       (or
+         (eq? a (car l))
+         (member* a (cdr l))))
+      (else (or (member* a (car l)) (member* a (cdr l)))))))
+
+(define leftmost
+  (lambda (l)
+    (cond
+      ((atom? (car l)) (car l))
+      (else (leftmost (car l))))))
+
+(define eqlist?
+  (lambda (l1 l2)
+    (cond
+      ((and (null? l1) (null? l2)) #t)
+      ((or (null? l1) (null? l2)) #f)
+      ((and (atom? (car l1)) (atom? (car l2)))
+       (cond
+         ((eqan? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2)))
+         (else #f)))
+      ((or (atom? (car l1)) (atom? (car l2))) #f)
+      (else
+       (and
+        (eqlist? (car l1) (car l2))
+        (eqlist? (cdr l1) (cdr l2)))))))
+
+(define equal?
+  (lambda (s1 s2)
+    (cond
+      ((and (atom? s1) (atom? s2)) (eqan? s1 s2))
+      ((or (atom? s1) (atom? s2)) #f)
+      (else (eqlist? s1 s2)))))
+      
+  
+
+
+
+
+
+;PAGE: 93
+(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
+(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
+;(eqlist? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
+;(eqlist? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
+;(leftmost '((potato) (chips ((with) fish) (chips))))
+;(member* (car (quote(chips))) (quote('(potato)'(chips'('(with)fish)'(chips)))))
+;(insertL* (car (quote(pecker))) (car (quote(chuck))) (quote(how much '(wood) could '('(a '(wood) chuck)) '('('(chuck))) '(if '(a) '('(wood chuck))) could chuck wood)))
 ;(subst* (car (quote(orange))) (car (quote(banana))) (quote(quote(banana) (quote(split (quote(quote(quote(quote(banana ice))) (quote(cream (quote(banana)))) (quote(sherbert)) (quote(banana)) (quote(bread)) (quote(banana brandy)))))))))
 ;(occur* (car (quote(banana))) (quote(quote(banana) (quote(split (quote(quote(quote(quote(banana ice))) (quote(cream (quote(banana)))) (quote(sherbert)) (quote(banana)) (quote(bread)) (quote(banana brandy)))))))))
 ;(insertR* (car (quote(biscuit))) (car (quote(cup))) (quote((quote(coffee)) cup (quote(quote(tea) cup)) (quote(and (quote(hick)))) cup)))
