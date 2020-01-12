@@ -293,6 +293,16 @@
         (eqlist? (car l1) (car l2))
         (eqlist? (cdr l1) (cdr l2)))))))
 
+(define eqlist2?
+  (lambda (l1 l2)
+    (cond
+      ((and (null? l1) (null? l2)) #t)
+      ((or (null? l1) (null? l2)) #f)
+      (else
+       (and
+        (equal? (car l1) (car l2))
+        (equal? (cdr l1) (cdr l2)))))))
+
 (define equal?
   (lambda (s1 s2)
     (cond
@@ -300,15 +310,46 @@
       ((or (atom? s1) (atom? s2)) #f)
       (else (eqlist? s1 s2)))))
       
-  
+(define rember2
+  (lambda (s l)
+    (cond
+      ((null? l) (quote()))
+      ((equal? (car l) s) (cdr l))
+      (else (cons (car l) (rember2 s (cdr l)))))))
+
+(define numbered?
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      ((eq? (car (cdr aexp)) (quote +)) (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp))))))
+      ((eq? (car (cdr aexp)) (quote ^)) (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp))))))
+      ((eq? (car (cdr aexp)) (quote x)) (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp)))))))))
+
+(define numbered2?
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      (else (and (numbered2? (car aexp)) (numbered2? (car (cdr (cdr aexp)))))))))
+
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car (cdr nexp)) (quote +)) (o+ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      ((eq? (car (cdr nexp)) (quote ^)) (o^ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      ((eq? (car (cdr nexp)) (quote x)) (ox (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
 
 
 
 
-
-;PAGE: 93
-(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
-(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
+;PAGE: 104
+(value '(1 + (3 ^ 4)))
+;(numbered2? '(3 + (4 x 5)))
+;(numbered? '(3 + (4 x 5)))
+;(eqlist2? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
+;(eqlist2? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
+;(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
+;(equal? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
 ;(eqlist? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
 ;(eqlist? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (cola))))
 ;(leftmost '((potato) (chips ((with) fish) (chips))))
