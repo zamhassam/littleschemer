@@ -339,11 +339,109 @@
       ((eq? (car (cdr nexp)) (quote ^)) (o^ (value (car nexp)) (value (car (cdr (cdr nexp))))))
       ((eq? (car (cdr nexp)) (quote x)) (ox (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
 
+(define value2
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car nexp) (quote +)) (o+ (value2 (car (cdr nexp))) (value2 (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) (quote ^)) (o^ (value2 (car (cdr nexp))) (value2 (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) (quote x)) (ox (value2 (car (cdr nexp))) (value2 (car (cdr (cdr nexp)))))))))
+
+(define value3
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car nexp) (quote +)) (o+ (value3 (car (cdr nexp))) (value3 (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) (quote ^)) (o^ (value3 (car (cdr nexp))) (value3 (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) (quote x)) (ox (value3 (car (cdr nexp))) (value3 (car (cdr (cdr nexp)))))))))
+
+(define value4
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (operator nexp) (quote +)) (o+ (value3 (1st-sub-exp nexp)) (value3 (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) (quote ^)) (o^ (value3 (1st-sub-exp nexp)) (value3 (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) (quote x)) (ox (value3 (1st-sub-exp nexp)) (value3 (2nd-sub-exp nexp)))))))
+
+(define 1st-sub-exp
+  (lambda (aexp)
+    (car (cdr aexp))))
+
+(define 2nd-sub-exp
+  (lambda (aexp)
+    (car (cdr (cdr aexp)))))
+
+(define operator
+  (lambda (aexp)
+    (car aexp)))
+
+(define sero?
+ (lambda (n)
+   (null? n)))
+
+(define edd1
+  (lambda (n)
+    (cons (quote()) n)))
+
+(define zub1
+  (lambda (n)
+    (cdr n)))
+
+(define p+
+  (lambda (n m)
+    (cond
+      ((sero? m) n)
+      (else (edd1 (p+ n (zub1 m)))))))
+
+(define member2?
+  (lambda (a lat)
+    (cond
+      ((null? lat) #f)
+      (else (or (equal? (car lat) a)
+                (member2? a (cdr lat)))))))
+
+(define set?
+  (lambda (lat)
+    (cond
+      ((null? lat) #t)
+      ((member2? (car lat) (cdr lat)) #f)
+      (else (set? (cdr  lat))))))
+
+(define makeset
+  (lambda (lat)
+    (cond
+      ((null? lat) lat)
+      ((member2? (car lat) (cdr lat)) (makeset (cdr lat)))
+      (else (cons (car lat) (makeset (cdr lat)))))))
+
+(define makeset2
+  (lambda (lat)
+    (cond
+      ((null? lat) lat)
+      (else (cons (car lat) (makeset (multirember (car lat) (cdr lat))))))))
+
+(define subset?
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) #t)
+      (else (and (member2? (car set1) set2) (subset? (cdr set1) set2))))))
 
 
 
-;PAGE: 104
-(value '(1 + (3 ^ 4)))
+;PAGE: 113
+(subset? (quote(5 chicken wings)) (quote(5 hamburgers 2 pieces fried chicken and light duckling wings)))
+(subset? (quote(red pink)) (quote(blue green yellow)))
+;(makeset2 (quote(apple peach pear peach plum apple lemon peach)))
+;(makeset (quote(apple peach pear peach plum apple lemon peach)))
+;(set? (quote(apple 3 pear 9 jam 4)))
+;(set? (quote(apple peaches apple plum)))
+;(set? (quote(apple peaches plum)))
+;(edd1 (quote()))
+;(edd1 (quote(() () ())))
+;(zub1 (quote(() () ())))
+;(edd1 (edd1 (edd1 (quote()))))
+;(value4 '(+ 1 (^ 3 4)))
+;(value '(1 + (3 ^ 4)))
 ;(numbered2? '(3 + (4 x 5)))
 ;(numbered? '(3 + (4 x 5)))
 ;(eqlist2? '(beef ((sausage)) (and (soda))) '(beef ((sausage)) (and (soda))))
