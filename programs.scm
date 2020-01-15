@@ -426,11 +426,45 @@
       ((null? set1) #t)
       (else (and (member2? (car set1) set2) (subset? (cdr set1) set2))))))
 
+(define eqset?
+  (lambda (set1 set2)
+    (and (subset? set1 set2) (subset? set2 set1))))
+
+(define intersect?
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) #f)
+      (else (or (member2? (car set1) set2) (intersect? (cdr set1) set2))))))
+
+(define intersect
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) (quote()))
+      ((member2? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
+      (else (intersect (cdr set1) set2)))))
+
+;(define union
+;  (lambda (set1 set2)
+;    (cond
+;      ((null? set1) set2)
+;      ((null? set2) set1)
+;      ((and (null? set1) (null? set2)) (quote()))
+;      ((null? set1) (cons (car set2) (union (cdr set1) (cdr set2))))
+;      ((null? set2) (cons (car set1) (union (cdr set1) (quote()))))
+;      (else (cons (car set1) (cons (car set2) (union (cdr set1) (cdr set2))))))))
 
 
-;PAGE: 113
-(subset? (quote(5 chicken wings)) (quote(5 hamburgers 2 pieces fried chicken and light duckling wings)))
-(subset? (quote(red pink)) (quote(blue green yellow)))
+
+
+;PAGE: 116
+(union (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
+;(intersect (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
+;(intersect (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
+;(intersect? (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
+;(intersect? (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
+;(eqset? (quote(6 large chickens with wings)) (quote(6 chickens with large wings)))
+;(subset? (quote(5 chicken wings)) (quote(5 hamburgers 2 pieces fried chicken and light duckling wings)))
+;(subset? (quote(red pink)) (quote(blue green yellow)))
 ;(makeset2 (quote(apple peach pear peach plum apple lemon peach)))
 ;(makeset (quote(apple peach pear peach plum apple lemon peach)))
 ;(set? (quote(apple 3 pear 9 jam 4)))
