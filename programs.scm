@@ -443,21 +443,18 @@
       ((member2? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
       (else (intersect (cdr set1) set2)))))
 
-;(define union
-;  (lambda (set1 set2)
-;    (cond
-;      ((null? set1) set2)
-;      ((null? set2) set1)
-;      ((and (null? set1) (null? set2)) (quote()))
-;      ((null? set1) (cons (car set2) (union (cdr set1) (cdr set2))))
-;      ((null? set2) (cons (car set1) (union (cdr set1) (quote()))))
-;      (else (cons (car set1) (cons (car set2) (union (cdr set1) (cdr set2))))))))
-
+(define union
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) set2)
+      ((member2? (car set1) set2) (union (cdr set1) set2))
+      (else (cons (car set1) (union (cdr set1) set2))))))
 
 
 
 ;PAGE: 116
 (union (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
+(union (quote(stewed tomatoes)) (quote(stewed tomatoes)))
 ;(intersect (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
 ;(intersect (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
 ;(intersect? (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
