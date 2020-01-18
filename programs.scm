@@ -450,11 +450,87 @@
       ((member2? (car set1) set2) (union (cdr set1) set2))
       (else (cons (car set1) (union (cdr set1) set2))))))
 
+(define intersectall
+  (lambda (l-set)
+    (cond
+      ((null? (cdr l-set)) (car l-set))
+      (else (intersect (car l-set) (intersectall (cdr l-set)))))))
+
+(define a-pair?
+  (lambda (x)
+    (cond
+      ((atom? x) #f)
+      ((null? x) #f)
+      ((null? (cdr x)) #f)
+      ((null? (cdr (cdr x))) #t)
+      (else #f))))
+
+(define first
+  (lambda (p)
+    (car p)))
+
+(define second
+  (lambda (p)
+    (car (cdr p))))
+
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 (quote())))))
+
+(define third
+  (lambda (p)
+    (car (cdr (cdr p)))))
+
+(define fun?
+  (lambda (rel)
+    (set? (firsts rel))))
+
+(define revrel
+  (lambda (rel)
+    (cond
+      ((null? rel) (quote()))
+      (else (cons (build (second (car rel)) (first (car rel))) (revrel (cdr rel)))))))
+
+(define revpair
+ (lambda (pair)
+   (build (second pair) (first pair))))
+
+(define revrel2
+  (lambda (rel)
+    (cond
+      ((null? rel) (quote()))
+      (else (cons (revpair (car rel)) (revrel2 (cdr rel)))))))
+
+(define seconds
+  (lambda (l)
+    (cond
+      ((null? l) (quote()))
+      (else (cons (second (car l)) (seconds (cdr l)))))))
+
+(define fullfun?
+  (lambda (fun)
+    (set? (seconds fun))))
 
 
-;PAGE: 116
-(union (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
-(union (quote(stewed tomatoes)) (quote(stewed tomatoes)))
+;PAGE: 125
+(fullfun? '((4 3) (5 2) (7 6) (6 2) (3 4)))
+(fullfun? '((4 3) (5 5) (7 6) (6 2) (3 4)))
+;(revrel2 '((8 a) (pumpkin pie) (got sick)))
+;(revrel '((8 a) (pumpkin pie) (got sick)))
+;(fun? '((4 3) (4 2) (7 6) (6 2) (3 4)))
+;(fun? '((8 3) (4 2) (7 6) (6 2) (3 4)))
+;(first '(3 7))
+;(second '(3 7))
+;(build '3 '7)
+;(third '((3) (+ 2 7) 4))
+;(a-pair? '3)
+;(a-pair? (quote((3))))
+;(a-pair? '(3 7))
+;(a-pair? '((3) (+ 2 7)))
+;(a-pair? '((3) (+ 2 7) (4)))
+;(intersectall '((a b c) (c a d e) (e f g h a b)))
+;(union (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
+;(union (quote(stewed tomatoes)) (quote(stewed tomatoes)))
 ;(intersect (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
 ;(intersect (quote(stewed tomatoes and macaroni)) (quote(pasta bolognese)))
 ;(intersect? (quote(stewed tomatoes and macaroni)) (quote(macaroni and cheese)))
