@@ -511,10 +511,24 @@
   (lambda (fun)
     (set? (seconds fun))))
 
+(define rember-f
+  (lambda (test? a l)
+    (cond
+      ((null? l) (quote()))
+      ((test? (car l) a) (cdr l))
+      (else (cons (car l) (rember-f test? a (cdr l)))))))
 
-;PAGE: 125
-(fullfun? '((4 3) (5 2) (7 6) (6 2) (3 4)))
-(fullfun? '((4 3) (5 5) (7 6) (6 2) (3 4)))
+
+
+  
+
+
+;PAGE: 127
+(rember-f = '5 '(6 2 5 3))
+(rember-f eq? 'jelly '(jelly beans are good))
+(rember-f equal? '(pop corn) '(lemonade (pop corn) and (cake)))
+;(fullfun? '((4 3) (5 2) (7 6) (6 2) (3 4)))
+;(fullfun? '((4 3) (5 5) (7 6) (6 2) (3 4)))
 ;(revrel2 '((8 a) (pumpkin pie) (got sick)))
 ;(revrel '((8 a) (pumpkin pie) (got sick)))
 ;(fun? '((4 3) (4 2) (7 6) (6 2) (3 4)))
