@@ -518,15 +518,73 @@
       ((test? (car l) a) (cdr l))
       (else (cons (car l) (rember-f test? a (cdr l)))))))
 
+(define eq?-c
+  (lambda (a)
+    (lambda (x)
+      (eq? x a))))
+
+(define rember-f2
+  (lambda (test?)
+    (lambda (a l)
+      (cond
+        ((null? l) (quote()))
+        ((test? (car l) a) (cdr l))
+        (else (cons (car l) ((rember-f2 test?) a (cdr l))))))))
+
+(define insertL-f
+  (lambda (test?)
+    (lambda (new old lat)
+      (cond
+        ((null? lat) (quote()))
+        ((test? old (car lat)) (cons new lat))
+        (else (cons (car lat) ((insertL-f test?) new old (cdr lat))))))))
+
+(define insertR-f
+  (lambda (test?)
+    (lambda (new old lat)
+      (cond
+        ((null? lat) (quote()))
+        ((test? old (car lat)) (cons old (cons new (cdr lat))))
+        (else (cons (car lat) ((insertR-f test?) new old (cdr lat))))))))
+
+(define insert-g
+  (lambda (seq)
+    (lambda (new old l)
+        (cond
+          ((null? l) (quote()))
+          ((eq? (car l) old) (seq new old (cdr l)))
+          (else (cons (car l) ((insert-g seq) new old (cdr l))))))))
+
+(define seqL
+  (lambda (new old l) (cons new (cons old l))))
+
+(define seqR
+  (lambda (new old l) (cons old (cons new l))))
+
+(define insertL2
+  (insert-g seqL))
+
+(define insertR2
+  (insert-g seqR))
+
+(define insertL3
+  (insert-g (lambda (new old l) (cons new (cons old l)))))
 
 
-  
 
 
-;PAGE: 127
-(rember-f = '5 '(6 2 5 3))
-(rember-f eq? 'jelly '(jelly beans are good))
-(rember-f equal? '(pop corn) '(lemonade (pop corn) and (cake)))
+;PAGE: 133
+(insertL3 'topping 'fudge '(ice cream with fudge for fudge dessert))
+(insertR2 'topping 'fudge '(ice cream with fudge for fudge dessert))
+(insertL2 'topping 'fudge '(ice cream with fudge for fudge dessert))
+;((rember-f2 =) '5 '(6 2 5 3))
+;((rember-f2 eq?) 'jelly '(jelly beans are good))
+;((rember-f2 equal?) '(pop corn) '(lemonade (pop corn) and (cake)))
+;((eq?-c 13) 13)
+;((eq?-c 13) 14)
+;(rember-f = '5 '(6 2 5 3))
+;(rember-f eq? 'jelly '(jelly beans are good))
+;(rember-f equal? '(pop corn) '(lemonade (pop corn) and (cake)))
 ;(fullfun? '((4 3) (5 2) (7 6) (6 2) (3 4)))
 ;(fullfun? '((4 3) (5 5) (7 6) (6 2) (3 4)))
 ;(revrel2 '((8 a) (pumpkin pie) (got sick)))
