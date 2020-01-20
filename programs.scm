@@ -561,6 +561,9 @@
 (define seqR
   (lambda (new old l) (cons old (cons new l))))
 
+(define seqS
+  (lambda (new old l) (cons new l)))
+
 (define insertL2
   (insert-g seqL))
 
@@ -570,13 +573,55 @@
 (define insertL3
   (insert-g (lambda (new old l) (cons new (cons old l)))))
 
+(define subst3
+  (insert-g seqS))
+
+(define atom-to-function
+  (lambda (x)
+    (cond
+      ((eq? x '+) o+)
+      ((eq? x 'x) ox)
+      (else o^))))
+
+(define value5
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (else ((atom-to-function (operator nexp))
+             (value5 (1st-sub-exp nexp))
+             (value5 (2nd-sub-exp nexp)))))))
+
+(define multirember-f
+  (lambda (test?)
+    (lambda (a lat)
+      (cond
+        ((null? lat) (quote()))
+        ((test? a (car lat)) ((multirember-f test?) a (cdr lat)))
+        (else (cons (car lat) ((multirember-f test?) a (cdr lat))))))))
+
+(define multirember-eq?
+  (multirember-f eq?))
+
+(define multiremberT
+  (lambda (test? lat)
+    (cond
+      ((null? lat) (quote()))
+      ((test? (car lat)) (multiremberT test? (cdr lat)))
+      (else (cons (car lat) (multiremberT test? (cdr lat)))))))
 
 
 
-;PAGE: 133
-(insertL3 'topping 'fudge '(ice cream with fudge for fudge dessert))
-(insertR2 'topping 'fudge '(ice cream with fudge for fudge dessert))
-(insertL2 'topping 'fudge '(ice cream with fudge for fudge dessert))
+
+;PAGE: 138
+(multiremberT (lambda (x) (eq? x 'tuna)) '(shrimp salad tuna salad and tuna))
+;(multirember-eq? 'cup '(coffee cup tea cup and hick cup))
+;((multirember-f eq?) 'cup '(coffee cup tea cup and hick cup))
+;(value5 '(+ 1 (^ 3 4)))
+;(atom-to-function (operator '(+ 4 3)))
+;(subst3 'vanilla 'chocolate '(banana ice cream with chocolate topping))
+;(insertL3 'topping 'fudge '(ice cream with fudge for fudge dessert))
+;(insertR2 'topping 'fudge '(ice cream with fudge for fudge dessert))
+;(insertL2 'topping 'fudge '(ice cream with fudge for fudge dessert))
 ;((rember-f2 =) '5 '(6 2 5 3))
 ;((rember-f2 eq?) 'jelly '(jelly beans are good))
 ;((rember-f2 equal?) '(pop corn) '(lemonade (pop corn) and (cake)))
