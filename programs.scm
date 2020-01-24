@@ -609,11 +609,75 @@
       ((test? (car lat)) (multiremberT test? (cdr lat)))
       (else (cons (car lat) (multiremberT test? (cdr lat)))))))
 
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+      ((null? lat)
+       (col '() '()))
+      ((eq? (car lat) a)
+       (multirember&co a
+                       (cdr lat)
+                       (lambda (newlat seen)
+                         (col newlat (cons (car lat) seen)))))
+      (else
+       (multirember&co a
+                       (cdr lat)
+                       (lambda (newlat seen)
+                         (col (cons (car lat) newlat) seen)))))))
+
+(define a-friend
+  (lambda (x y)
+    (null? y)))
+
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+      ((null? lat) '())
+      ((eq? oldL (car lat))
+       (cons new (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))
+      ((eq? oldR (car lat))
+       (cons (car lat) (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+      (else
+       (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))))
+
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat)
+       (col '() 0 0))
+      ((eq? oldL (car lat))
+       (multiinsertLR&co new
+                         oldL
+                         oldR
+                         (cdr lat)
+                         (lambda (newlat L R)
+                           (col (cons new (cons (car lat) newlat))
+                                (add1 L)
+                                R))))
+      ((eq? oldR (car lat))
+       (multiinsertLR&co new
+                         oldL
+                         oldR
+                         (cdr lat)
+                         (lambda (newlat L R)
+                           (col (cons (car lat) (cons new newlat)) L (add1 R)))))
+      (else (multiinsertLR&co new
+                              oldL
+                              oldR
+                              (cdr lat)
+                              (lambda (newlat L R)
+                                (col (cons (car lat) newlat)
+                                     L
+                                     R)))))))
 
 
-
-;PAGE: 138
-(multiremberT (lambda (x) (eq? x 'tuna)) '(shrimp salad tuna salad and tuna))
+;PAGE: 144
+;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) newlat))
+;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) L))
+;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) R))
+;(multiinsertLR 'new 'oldL 'oldR '(start with the oldL and end with oldR))
+;(multirember&co 'tuna '(berries tuna fish) a-friend)
+;(multiremberT (lambda (x) (eq? x 'tuna)) '(shrimp salad tuna salad and tuna))
 ;(multirember-eq? 'cup '(coffee cup tea cup and hick cup))
 ;((multirember-f eq?) 'cup '(coffee cup tea cup and hick cup))
 ;(value5 '(+ 1 (^ 3 4)))
