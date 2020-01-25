@@ -670,8 +670,39 @@
                                      L
                                      R)))))))
 
+(define even?
+  (lambda (n)
+    (o= (ox (o/ n 2) 2) n)))
+
+(define evens-only*
+  (lambda (l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (cons (car l) (evens-only* (cdr l))))
+         (else (evens-only* (cdr l)))))
+      (else (cons (evens-only* (car l)) (evens-only* (cdr l)))))))
+
+(define evens-only*&co
+  (lambda (l col)
+    (cond
+      ((null? l) (col '() 1 0))
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (evens-only*&co (cdr l)
+                                          (lambda (evens multeven sumodd)
+                                            (col (cons (car l) evens)
+                                                 (ox multeven (car l))
+                                                 sumodd))))
+
+
 
 ;PAGE: 144
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) evens))
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) multeven))
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) sumodd))
+;(evens-only* '(1 (2 3) 4 ((5 6) 8)))
 ;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) newlat))
 ;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) L))
 ;(multiinsertLR&co 'new 'oldL 'oldR '(start with the oldL and end oldL with oldR) (lambda (newlat L R) R))
