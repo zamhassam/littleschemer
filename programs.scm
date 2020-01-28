@@ -719,9 +719,48 @@
   (lambda (a lat)
     (keep-looking a (pick 1 lat) lat)))
 
+(define shift
+  (lambda (x)
+    (build (first (first x))
+           (build (second (first x))
+                  (second x)))))
+
+(define align
+  (lambda (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora)) (align (shift pora)))
+      (else (build (first pora) (align (second pora)))))))
+
+(define length*
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else (o+ (length* (first pora))
+                (length* (second pora)))))))
+
+(define length2*
+  (lambda (pora)
+    (cond
+      ((null? pora) 0)
+      ((atom? pora) 1)
+      ((atom? (car pora)) (o+ 1 (length* (cdr pora))))
+      (else (o+ (length* (car pora)) (length* (cdr pora)))))))
+
+(define shuffle
+  (lambda (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora))
+       (shuffle (revpair pora)))
+      (else (build (first pora) (shuffle (second pora)))))))
+
 ;PAGE: 152
-(looking 'caviar '(6 2 4 caviar 5 7 3))
-(looking 'caviar '(6 2 grits caviar 5 7 3))
+(shuffle '(a (b (c d))))
+;(length* '(a (b (c d))))
+;(shift '((a b) (c d)))
+;(looking 'caviar '(6 2 4 caviar 5 7 3))
+;(looking 'caviar '(6 2 grits caviar 5 7 3))
 ;(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) evens))
 ;(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) multeven))
 ;(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (evens multeven sumodd) sumodd))
