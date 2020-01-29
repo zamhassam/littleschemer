@@ -755,8 +755,56 @@
        (shuffle (revpair pora)))
       (else (build (first pora) (shuffle (second pora)))))))
 
-;PAGE: 152
-(shuffle '(a (b (c d))))
+(define will-stop?
+  (lambda (f)
+    (f '()) #t))
+
+(define eternity
+  (lambda (x)
+    (eternity x)))
+
+(define last-try
+  (lambda (x)
+    (and (will-stop? last-try)
+         (eternity))))
+
+(define length0
+  (lambda (l)
+    (cond
+      ((null? l) 0)
+      (else (add1 (eternity (cdr l)))))))
+
+(define length1
+  (lambda (l)
+    (cond
+      ((null? l) 0)
+      (else (add1
+             ((lambda (l)
+               (cond
+                 ((null? l) 0)
+                 (else (add1 (eternity (cdr l))))))
+              (cdr l))
+             )))))
+
+
+
+(define length1
+  (lambda (l)
+    (cond
+      ((null? l) 0)
+      (else (add1
+             ((lambda (l)
+               (cond
+                 ((null? l) 0)
+                 (else (add1 (eternity (cdr l))))))
+              (cdr l))
+             )))))
+
+;PAGE: 156
+(length0 '())
+(length1 '(a))
+;(will-stop? eternity)
+;(shuffle '(a (b (c d))))
 ;(length* '(a (b (c d))))
 ;(shift '((a b) (c d)))
 ;(looking 'caviar '(6 2 4 caviar 5 7 3))
