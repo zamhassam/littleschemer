@@ -786,23 +786,23 @@
               (cdr l))
              )))))
 
+((lambda (f)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (f (cdr l)))))))
+ ((lambda (f)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1 (g (cdr l)))))))
+  eternity))
 
-
-(define length1
-  (lambda (l)
-    (cond
-      ((null? l) 0)
-      (else (add1
-             ((lambda (l)
-               (cond
-                 ((null? l) 0)
-                 (else (add1 (eternity (cdr l))))))
-              (cdr l))
-             )))))
 
 ;PAGE: 156
-(length0 '())
-(length1 '(a))
+(length-1 '(1 2))
+;(length0 '())
+;(length1 '(a))
 ;(will-stop? eternity)
 ;(shuffle '(a (b (c d))))
 ;(length* '(a (b (c d))))
