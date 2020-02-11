@@ -843,16 +843,72 @@
         (else (add1 (length (cdr l)))))))
    eternity)))
 
-((lambda (mk-length)
+(((lambda (mk-length)
    (mk-length eternity))
  (lambda (length)
    (lambda (l)
      (cond
        ((null? l) 0)
-       (else (add1 (length (cdr l))))))))
+       (else (add1 (length (cdr l)))))))) '())
 
+(((lambda (mk-length)
+   (mk-length (mk-length eternity)))
+ (lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (length (cdr l)))))))) '(1))
 
-;PAGE: 156
+(((lambda (mk-length)
+   (mk-length (mk-length (mk-length eternity))))
+ (lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (length (cdr l)))))))) '(1 2))
+
+(((lambda (mk-length)
+    (mk-length mk-length))
+  (lambda (mk-length)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1
+               ((mk-length mk-length)
+                (cdr l))))))))
+ '(1 2 3 4))
+
+(define new-entry build)
+
+(define lookup-in-entry-help
+  (lambda (name names values entry-f)
+    (cond
+      ((null? names) (entry-f name))
+      ((eq? (car names) name) (car values))
+      (else (lookup-in-entry-help name (cdr names) (cdr values) entry-f)))))
+  
+
+(define lookup-in-entry
+  (lambda (name entry entry-f)
+    (lookup-in-entry-help name
+                           (first entry)
+                           (second entry)
+                           entry-f)))
+
+(define extend-table cons)
+
+(define lookup-in-table
+  (lambda (name table table-f)
+    (cond
+      ((null? table) (table-f name))
+      (else (lookup-in-entry name (car table) (lambda (name) (lookup-in-table name (cdr table) table-f)))))))
+
+;PAGE: 178
+(lookup-in-table 'beverage '(((entree dessert)
+                              (spaghetti spumoni))
+                            ((appetizer entree beverage)
+                              (food tastes good))) (lambda (name) name))
+;(lookup-in-entry 'entree (new-entry '(appetizer entree beverage) '(pate boeuf vin)) (lambda (name) name))
 ;(length1 '(1))
 ;(length2 '(1 2))
 ;(length0 '())
