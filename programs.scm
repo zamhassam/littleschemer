@@ -786,21 +786,67 @@
               (cdr l))
              )))))
 
-((lambda (f)
+(define length2
+  (lambda (l)
+    (cond
+      ((null? l) 0)
+      (else
+       (add1
+        ((lambda (l)
+           (cond
+             ((null? l) 0)
+             (else
+              (add1
+               ((lambda (l)
+                  (cond
+                    ((null? l) 0)
+                    (else
+                     (add1
+                      (eternity
+                       (cdr l))))))
+                (cdr l))))))
+         (cdr l)))))))
+
+(((lambda (length)
    (lambda (l)
      (cond
        ((null? l) 0)
-       (else (add1 (f (cdr l)))))))
- ((lambda (f)
+       (else (add1 (length (cdr l)))))))
+   eternity)'())
+
+((lambda (f)
     (lambda (l)
       (cond
         ((null? l) 0)
-        (else (add1 (g (cdr l)))))))
-  eternity))
+        (else (add1 (f (cdr l)))))))
+  ((lambda (g)
+     (lambda (l)
+       (cond
+         ((null? l) 0)
+         (else (add1 (g (cdr l )))))))
+   eternity))
+
+((lambda (length)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1 (length (cdr l)))))))
+ ((lambda (length)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1 (length (cdr l)))))))
+  ((lambda (length)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1 (length (cdr l)))))))
+   eternity)))
 
 
 ;PAGE: 156
-(length-1 '(1 2))
+;(length1 '(1))
+;(length2 '(1 2))
 ;(length0 '())
 ;(length1 '(a))
 ;(will-stop? eternity)
