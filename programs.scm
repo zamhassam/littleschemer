@@ -903,11 +903,51 @@
       ((null? table) (table-f name))
       (else (lookup-in-entry name (car table) (lambda (name) (lookup-in-table name (cdr table) table-f)))))))
 
+(define atom-to-action
+  (lambda (e)
+    (cond
+      ((number? e) *const)
+      ((eq? e #t) *const)
+      ((eq? e #f) *const)
+      ((eq? e 'cons) *const)
+      ((eq? e 'car) *const)
+      ((eq? e 'cdr) *const)
+      ((eq? e 'null?) *const)
+      ((eq? e 'eq?) *const)
+      ((eq? e 'atom?) *const)
+      ((eq? e 'zero?) *const)
+      ((eq? e 'add1) *const)
+      ((eq? e 'sub1) *const)
+      ((eq? e 'number?) *const)
+      (else *identifier))))
+
+(define list-to-action
+  (lambda (e)
+    (cond
+
+(define expression-to-action
+  (lambda (e)
+    ((atom? e) (atom-to-action e))
+    (else (list-to-action e))))
+
 ;PAGE: 178
-(lookup-in-table 'beverage '(((entree dessert)
-                              (spaghetti spumoni))
-                            ((appetizer entree beverage)
-                              (food tastes good))) (lambda (name) name))
+
+
+
+(value '(car ('quote(a b))))
+;(cons 'car
+;      (cons (cons ''quote
+;                  (cons
+;                   (cons 'a
+;                         (cons 'b
+;                               (cons 'c
+;                                     (quote ()))))
+;                   (quote ())))
+;            (quote ())))
+;(lookup-in-table 'beverage '(((entree dessert)
+;                              (spaghetti spumoni))
+;                            ((appetizer entree beverage)
+;                              (food tastes good))) (lambda (name) name))
 ;(lookup-in-entry 'entree (new-entry '(appetizer entree beverage) '(pate boeuf vin)) (lambda (name) name))
 ;(length1 '(1))
 ;(length2 '(1 2))
