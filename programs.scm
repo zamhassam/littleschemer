@@ -924,17 +924,43 @@
 (define list-to-action
   (lambda (e)
     (cond
+      ((atom? (car e))
+       (cond
+         ((eq? (car e) (quote quote) *quote))
+         ((eq? (car e) (quote lambda) *lambda))
+         ((eq? (car e) (quote cond) *cond))
+         (else *application)))
+      (else *application))))
 
 (define expression-to-action
   (lambda (e)
+    (cond
     ((atom? e) (atom-to-action e))
-    (else (list-to-action e))))
+    (else (list-to-action e)))))
+
+(define *const
+  (lambda (e table)
+    (cond
+      ((number? e) e)
+      ((eq? #t) #t)
+      ((eq? #f) #f)
+      (else (build (quote primitive) e)))))
+
+(define *quote
+  (lambda (e table)
+    (text-of e)))
+
+(define text-of (lambda (e) #f))
+(define *application #f)
+(define *identifier #f)
+(define *lambda #f)
+(define *cond #f)
+
 
 ;PAGE: 178
 
-
-
-(value '(car ('quote(a b))))
+(atom-to-action 'cons)
+;(value '(car ('quote(a b))))
 ;(cons 'car
 ;      (cons (cons ''quote
 ;                  (cons
