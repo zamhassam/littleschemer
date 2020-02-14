@@ -942,24 +942,40 @@
   (lambda (e table)
     (cond
       ((number? e) e)
-      ((eq? #t) #t)
-      ((eq? #f) #f)
+      ((eq? e #t) #t)
+      ((eq? e #f) #f)
       (else (build (quote primitive) e)))))
 
 (define *quote
   (lambda (e table)
     (text-of e)))
 
-(define text-of (lambda (e) #f))
+(define text-of second)
+
+(define initial-table
+  (lambda (name) (car (quote()))))
+
+(define *identifier
+  (lambda (e table)
+    (lookup-in-table e table initial-table)))
+
+(define *lambda
+  (lambda (e table)
+    (build (quote non-primitive) (cons table (cdr e)))))
+
+(define table-of first)
+(define formals-of second)
+(define body-of third)
+
 (define *application #f)
-(define *identifier #f)
-(define *lambda #f)
 (define *cond #f)
 
 
 ;PAGE: 178
-
-(atom-to-action 'cons)
+;(*lambda '(lambda (x) (add1 3)) '())
+;(*identifier 'richard '(((james richard john) (1 2 3))))
+;(*quote (quote (quote (james and joy) )) '())
+;(*const 3 '())
 ;(value '(car ('quote(a b))))
 ;(cons 'car
 ;      (cons (cons ''quote
