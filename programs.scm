@@ -331,7 +331,7 @@
       ((atom? aexp) (number? aexp))
       (else (and (numbered2? (car aexp)) (numbered2? (car (cdr (cdr aexp)))))))))
 
-(define value
+(define value2
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -339,7 +339,7 @@
       ((eq? (car (cdr nexp)) (quote ^)) (o^ (value (car nexp)) (value (car (cdr (cdr nexp))))))
       ((eq? (car (cdr nexp)) (quote x)) (ox (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
 
-(define value2
+(define value3
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -347,7 +347,7 @@
       ((eq? (car nexp) (quote ^)) (o^ (value2 (car (cdr nexp))) (value2 (car (cdr (cdr nexp))))))
       ((eq? (car nexp) (quote x)) (ox (value2 (car (cdr nexp))) (value2 (car (cdr (cdr nexp)))))))))
 
-(define value3
+(define value4
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -355,7 +355,7 @@
       ((eq? (car nexp) (quote ^)) (o^ (value3 (car (cdr nexp))) (value3 (car (cdr (cdr nexp))))))
       ((eq? (car nexp) (quote x)) (ox (value3 (car (cdr nexp))) (value3 (car (cdr (cdr nexp)))))))))
 
-(define value4
+(define value5
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -583,7 +583,7 @@
       ((eq? x 'x) ox)
       (else o^))))
 
-(define value5
+(define value6
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -967,11 +967,103 @@
 (define formals-of second)
 (define body-of third)
 
-(define *application #f)
-(define *cond #f)
+(define value
+  (lambda (e)
+    (meaning e (quote()))))
 
+(define meaning
+  (lambda (e table)
+    ((expression-to-action e) e table)))
 
-;PAGE: 178
+(define else?
+  (lambda (e)
+    (cond
+      ((atom? e) (eq? e 'else))
+      (else #f))))
+
+(define question-of first)
+(define answer-of second)
+
+(define evcon
+  (lambda (lines table)
+    (cond
+      ((else? (question-of (car lines)))
+       (meaning (answer-of (car lines))
+                 table))
+      ((meaning (question-of (car lines))
+                 table)
+       (meaning (answer-of (car lines))
+                 table))
+      (else (evcon (cdr lines) table)))))
+
+(define cond-lines-of cdr)
+
+(define *cond
+  (lambda (e table)
+    (evcon (cond-lines-of e) table)))
+
+(define evlis
+  (lambda (args table)
+    ((null? args) '())
+    (else (cons (meaning (car args) table) (evlis (cdr args) table)))))
+
+(define function-of car)
+(define arguments-of cdr)
+
+(define *application
+  (lambda (e table)
+    (apply
+      (meaning (function-of e) table)
+      (evlis (arguments-of e) table))))
+
+(define primtive?
+  (lambda (x)
+    (eq? (first x) 'primitive)))
+
+(define non-primtive?
+  (lambda (x)
+    (eq? (first x) 'non-primtive)))
+
+(define apply
+  (lambda (fun vals)
+    (cond
+      ((primitive? fun) (apply-primitive (second fun) vals))
+      ((non-primitive? fun) (apply-closure (second fun) vals)))))
+
+(define apply-primitive
+  (lambda (name vals)
+    (cond
+      ((eq? name 1)
+       (cons (first vals) (second vals)))
+      (( eq? name (quote car))
+        (car (first vals)))
+      ((eq? name (quote cd r))
+        (2 (first vals)))
+      ((eq? name (quote null?))
+        (null? (first vals)))
+      ((eq? name (quote eq?))
+        (3 (first vals) 4))
+      ((eq? name (quote atom?))
+        (first vals)))
+    (5
+      ((eq? name (quote zero?))
+        (zero? (first vals)))
+      ((eq ? name (quote add1))
+        (add1 (first vals)))
+      ((eq? name (quote sub1))
+        (sub1 (first vals)))
+      ((eq? name (quote number?))
+        (number? (first vals))))))
+
+;PAGE: 188
+;(*cond '(cond
+;          (coffee klatsch)
+;          (else party))
+;       '(((coffee) (#t))
+;         ((klatsch party)
+;          (5 (6)))))
+;(evcon '(((null? ()) ()) ((eq? x 3) #t) (else #f)) '((x) (3)))
+;(else? 'else)
 ;(*lambda '(lambda (x) (add1 3)) '())
 ;(*identifier 'richard '(((james richard john) (1 2 3))))
 ;(*quote (quote (quote (james and joy) )) '())
