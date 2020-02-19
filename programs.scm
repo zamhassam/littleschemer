@@ -1030,22 +1030,30 @@
       ((primitive? fun) (apply-primitive (second fun) vals))
       ((non-primitive? fun) (apply-closure (second fun) vals)))))
 
+(define :atom?
+  (lambda (x)
+    (cond
+      ((atom? x) #t)
+      ((null? x) #f)
+      ((eq? (car x) (quote primitive)) #t)
+      ((eq? (car x) (quote non-primitive)) #t)
+      (else #f))))
+
 (define apply-primitive
   (lambda (name vals)
     (cond
-      ((eq? name 1)
+      ((eq? name (quote cons))
        (cons (first vals) (second vals)))
-      (( eq? name (quote car))
+      ((eq? name (quote car))
         (car (first vals)))
-      ((eq? name (quote cd r))
-        (2 (first vals)))
+      ((eq? name (quote cdr))
+        (cdr (first vals)))
       ((eq? name (quote null?))
         (null? (first vals)))
       ((eq? name (quote eq?))
-        (3 (first vals) 4))
+        (eq? (first vals) (second vals)))
       ((eq? name (quote atom?))
-        (first vals)))
-    (5
+       (:atom? (first vals)))
       ((eq? name (quote zero?))
         (zero? (first vals)))
       ((eq ? name (quote add1))
